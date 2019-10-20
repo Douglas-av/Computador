@@ -1,3 +1,5 @@
+package Outros;
+
 import java.awt.EventQueue;
 import java.awt.Image;
 import java.util.LinkedList;
@@ -6,27 +8,21 @@ import java.util.Queue;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.data.category.DefaultCategoryDataset;
-
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class TelaCadastro extends JFrame {
+public class TelaCadastro extends ManipularArquivos {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	private JPanel contentPane;
 	private Queue<String> conteudo = new LinkedList<String>();
-	private ManipularArquivos manipularArquivos = new ManipularArquivos();
-	
+
 	private static ImageIcon icone_Iceberg = new ImageIcon(
 			new ImageIcon(TelaCadastro.class.getResource("/imagens/iceberg2.png")).getImage().getScaledInstance(20, 30,
 					Image.SCALE_SMOOTH));
@@ -53,26 +49,7 @@ public class TelaCadastro extends JFrame {
 		});
 	}
 
-	public void criarGrafico(int quantidade, Queue<Integer> valores, Queue<String> nomes, Queue<String> nuzei) {
-		DefaultCategoryDataset barra = new DefaultCategoryDataset();
-
-		for (int i = 0; i < quantidade; i++) {
-			barra.addValue(valores.remove(), nomes.remove(), nuzei.remove());
-		}
-
-		JFreeChart grafico = ChartFactory.createBarChart3D("Grafico de idades por sexo", "Nomes", "Idade", barra,
-				PlotOrientation.VERTICAL, true, true, false);
-
-		ChartPanel painel = new ChartPanel(grafico);
-		painel.setLocation(38, 69);
-		painel.setSize(375, 369);
-		getContentPane().add(painel);
-		painel.setLayout(null);
-		painel.setVisible(true);
-	}
-
 	public TelaCadastro() {
-
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 700, 600);
 
@@ -86,7 +63,7 @@ public class TelaCadastro extends JFrame {
 		mnNovo.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-				manipularArquivos.novoArquivo();
+				novoArquivo();
 			}
 		});
 		mnNovo.setSize(40, 60);
@@ -96,8 +73,8 @@ public class TelaCadastro extends JFrame {
 		mnAberturaArquivo.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-				conteudo = manipularArquivos.abrirArquivo();
-				conteudo.toString();
+				conteudo = abrirArquivo();
+				atualizaTabela(conteudo);
 			}
 		});
 		mnArquivo.add(mnAberturaArquivo);
@@ -114,7 +91,8 @@ public class TelaCadastro extends JFrame {
 				System.out.println(nomes);
 				nomes.forEach(item -> System.out.println(item));
 
-				conteudo.forEach(item -> valores.add(Integer.parseInt(item.toString().split(java.util.regex.Pattern.quote(";"))[1])));
+				conteudo.forEach(item -> valores
+						.add(Integer.parseInt(item.toString().split(java.util.regex.Pattern.quote(";"))[1])));
 				System.out.println(valores);
 				valores.forEach(item -> System.out.println(item));
 
@@ -178,6 +156,8 @@ public class TelaCadastro extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setVisible(true);
 		contentPane.setLayout(null);
+		scrollPane = new JScrollPane();
+		scrollPane.setBounds(0, 0, 300, 200);
 
 	}
 }

@@ -1,3 +1,5 @@
+package Outros;
+
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
 
