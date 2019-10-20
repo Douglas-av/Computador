@@ -1,20 +1,27 @@
 package Outros;
 
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.EventQueue;
 import java.awt.Image;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
 import javax.swing.ImageIcon;
+import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
-import javax.swing.JMenuBar;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+
+import SomenteTelas.SubTela1;
 
 public class TelaCadastro extends ManipularArquivos {
 
@@ -51,7 +58,23 @@ public class TelaCadastro extends ManipularArquivos {
 
 	public TelaCadastro() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 700, 600);
+		setBounds(100, 100, 774, 604);
+		contentPane = new JPanel();
+		contentPane.setForeground(Color.BLACK);
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(contentPane);
+
+		JDesktopPane desktopPane = new JDesktopPane();
+		desktopPane.setBackground(Color.LIGHT_GRAY);
+		GroupLayout gl_contentPane = new GroupLayout(contentPane);
+		gl_contentPane.setHorizontalGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+				.addComponent(desktopPane, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 748, Short.MAX_VALUE));
+		gl_contentPane.setVerticalGroup(gl_contentPane.createParallelGroup(Alignment.LEADING).addComponent(desktopPane,
+				Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 534, Short.MAX_VALUE));
+		contentPane.setLayout(gl_contentPane);
+
+		scrollPane = new JScrollPane();
+		scrollPane.setBounds(0, 0, 300, 200);
 
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
@@ -73,8 +96,13 @@ public class TelaCadastro extends ManipularArquivos {
 		mnAberturaArquivo.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
+				SubTela1 subTela = new SubTela1();
+				desktopPane.add(subTela);
 				conteudo = abrirArquivo();
-				atualizaTabela(conteudo);
+				Component componente = atualizaTabela(conteudo);
+				subTela.getContentPane().add(componente);
+				subTela.setVisible(true);
+
 			}
 		});
 		mnArquivo.add(mnAberturaArquivo);
@@ -100,7 +128,12 @@ public class TelaCadastro extends ManipularArquivos {
 				System.out.println(nuzei);
 				nuzei.forEach(item -> System.out.println(item));
 
-				criarGrafico(valores.size(), valores, nomes, nuzei);
+				SubTela1 subTela = new SubTela1();
+				desktopPane.add(subTela);
+				Component grafico = criarGrafico(valores.size(), valores, nomes, nuzei);
+				subTela.getContentPane().add(grafico);
+				subTela.setVisible(true);
+
 			}
 		});
 		mnArquivo.add(mntmNewMenuItem_2);
@@ -124,40 +157,6 @@ public class TelaCadastro extends ManipularArquivos {
 
 		JMenuItem mntmNewMenuItem_6 = new JMenuItem("New menu item");
 		mnNewMenu_1.add(mntmNewMenuItem_6);
-
-		JMenuItem mntmNewMenuItem_5 = new JMenuItem("New menu item");
-		mnNewMenu_1.add(mntmNewMenuItem_5);
-
-		JMenu mnNewMenu_2 = new JMenu("New menu");
-		menuBar.add(mnNewMenu_2);
-
-		JMenuItem mntmNewMenuItem_7 = new JMenuItem("New menu item");
-		mnNewMenu_2.add(mntmNewMenuItem_7);
-
-		JMenu mnNewMenu_3 = new JMenu("New menu");
-		menuBar.add(mnNewMenu_3);
-
-		JMenuItem mntmNewMenuItem_8 = new JMenuItem("New menu item");
-		mnNewMenu_3.add(mntmNewMenuItem_8);
-
-		JMenu mnNewMenu_4 = new JMenu("New menu");
-		menuBar.add(mnNewMenu_4);
-
-		JMenuItem mntmNewMenuItem_9 = new JMenuItem("New menu item");
-		mnNewMenu_4.add(mntmNewMenuItem_9);
-
-		JMenu mnNewMenu_5 = new JMenu("New menu");
-		menuBar.add(mnNewMenu_5);
-
-		JMenuItem mntmNewMenuItem_10 = new JMenuItem("New menu item");
-		mnNewMenu_5.add(mntmNewMenuItem_10);
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setContentPane(contentPane);
-		contentPane.setVisible(true);
-		contentPane.setLayout(null);
-		scrollPane = new JScrollPane();
-		scrollPane.setBounds(0, 0, 300, 200);
 
 	}
 }

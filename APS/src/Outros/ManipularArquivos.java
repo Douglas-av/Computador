@@ -1,5 +1,6 @@
 package Outros;
 
+import java.awt.Component;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -53,9 +54,9 @@ public class ManipularArquivos extends JFrame {
 		} catch (URISyntaxException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} 
+		}
 		String dir = pasta.getAbsolutePath();
-		
+
 		try {
 			String nomeArq = JOptionPane.showInputDialog("Informe o nome do arquivo: ");
 			if (nomeArq == null) {
@@ -126,7 +127,7 @@ public class ManipularArquivos extends JFrame {
 		return conteudo;
 	}
 
-	public void criarGrafico(int quantidade, Queue<Integer> valores, Queue<String> nomes, Queue<String> nuzei) {
+	public Component criarGrafico(int quantidade, Queue<Integer> valores, Queue<String> nomes, Queue<String> nuzei) {
 		DefaultCategoryDataset barra = new DefaultCategoryDataset();
 
 		for (int i = 0; i < quantidade; i++) {
@@ -138,13 +139,14 @@ public class ManipularArquivos extends JFrame {
 
 		ChartPanel painel = new ChartPanel(grafico);
 		painel.setLocation(38, 69);
-		painel.setBounds(305, 0, 360, 200);
+		painel.setBounds(0, 0, 200, 200);
 		getContentPane().add(painel);
 		painel.setLayout(null);
 		painel.setVisible(true);
+		return painel;
 	}
 
-	public void atualizaTabela(Queue<String> conteudo) {
+	public Component atualizaTabela(Queue<String> conteudo) {
 		this.setVisible(true);
 		String[] separadas;
 		String[] cabecalho;
@@ -163,7 +165,7 @@ public class ManipularArquivos extends JFrame {
 		}
 
 		scrollPane.setViewportView(tabela);
-		getContentPane().add(scrollPane);
+		return scrollPane;
 	}
 
 	public static void main(String[] args) {
@@ -171,7 +173,7 @@ public class ManipularArquivos extends JFrame {
 //		Queue<String> s = mnaq.abrirArquivo();
 //
 //		mnaq.atualizaTabela(s);
-	
+
 		mnaq.abrirArquivo();
 	}
 
