@@ -12,6 +12,8 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.Scanner;
+
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -29,7 +31,7 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
 
 public class ManipularArquivos extends JFrame {
-
+	private String path;
 	private static final long serialVersionUID = 1L;
 	protected JScrollPane scrollPane;
 	protected JTable tabela;
@@ -46,6 +48,26 @@ public class ManipularArquivos extends JFrame {
 		scrollPane = new JScrollPane();
 		scrollPane.setBounds(0, 0, 300, 200);
 	}
+	
+	public String selecionarDiretorio() {
+		File caminho = new File(""); 
+	    JFileChooser chooser = new JFileChooser(); 
+	    chooser.setCurrentDirectory(new java.io.File("."));
+	    chooser.setDialogTitle("Escolha onde quer salvar o arquivo");
+	    chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+	    //
+	    // disable the "All files" option.
+	    //
+	    chooser.setAcceptAllFileFilterUsed(false);
+	    //    
+	    if (chooser.showOpenDialog(chooser) == JFileChooser.APPROVE_OPTION) { 
+	      caminho = chooser.getSelectedFile();
+	      }
+	    else {
+	      System.out.println("Nada selecionado ");
+	      }
+	    return caminho.toString();
+	}
 
 	public void novoArquivo() {
 		File pasta = null;
@@ -55,8 +77,8 @@ public class ManipularArquivos extends JFrame {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		String dir = pasta.getAbsolutePath();
-
+//		String dir = pasta.getAbsolutePath();
+		String caminho = selecionarDiretorio();
 		try {
 			String nomeArq = JOptionPane.showInputDialog("Informe o nome do arquivo: ");
 			if (nomeArq == null) {
@@ -66,7 +88,7 @@ public class ManipularArquivos extends JFrame {
 			if (tipoArq == null) {
 				return;
 			}
-			FileWriter arq = new FileWriter(dir + "/" + nomeArq + "." + tipoArq);
+			FileWriter arq = new FileWriter(caminho + "/" + nomeArq + "." + tipoArq);
 			PrintWriter gravarArq = new PrintWriter(arq);
 
 			String entrada = JOptionPane.showInputDialog("Aperte ENTER para sair", null);
@@ -76,13 +98,119 @@ public class ManipularArquivos extends JFrame {
 				entrada = JOptionPane.showInputDialog("Aperte ENTER para sair", null);
 
 			}
-			JOptionPane.showMessageDialog(null, "O arquvi foi salvo em: " + dir, null, 1);
+			JOptionPane.showMessageDialog(null, "O arquvi foi salvo em: " + caminho, null, 1);
 			arq.close();
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 	}
+	
+	public void conteudoArquivo(LinkedList<String> conteudo) {
+		if (conteudo.getFirst()==null) {
+			JOptionPane.showMessageDialog(null,"O arquivo selecionado esta vazio","Aviso",JOptionPane.INFORMATION_MESSAGE); 
+		}else {
+			conteudo.forEach(item -> System.out.println(item));
+			Object[] opcoes= { "Adicionar", "Deletar"};
+			int escolha = JOptionPane.showOptionDialog(null,
+					"O arquivo selecionado possui os seguintes valores:\n\r"+conteudo+"\n\rDeseja deletar ou adicionar algum valor?",
+					"Leitura",
+					JOptionPane.YES_NO_OPTION,
+					JOptionPane.QUESTION_MESSAGE,
+					null,     //do not use a custom Icon
+					opcoes,  //the titles of buttons
+					opcoes[0]); //default button title
+//			System.out.println(escolha);
+			if (escolha==JOptionPane.YES_OPTION) {
+				adicionar(conteudo);
+			}else {
+				deletar(conteudo);
+			}
+		}
+	}
+	
+	public int forma() {
+		Object[] opcoes2 = { "Fila", "Pilha","Cancelar" };
+		int tipoEntrada = JOptionPane.showOptionDialog(null,
+				"Deseja inserir valores usando pila ou filha?",
+				"Método de entrada",
+				JOptionPane.YES_NO_OPTION,
+				JOptionPane.QUESTION_MESSAGE,
+				null,     //do not use a custom Icon
+				opcoes2,  //the titles of buttons
+				opcoes2[0]); //default button title
+		if (tipoEntrada==JOptionPane.YES_OPTION) {
+			return 0;
+//			conteudo.add("10");
+		}else {
+//			conteudo.add(0,"10");
+			return 	1;
+		}
+	}
+	
+	public void adicionar(LinkedList<String> conteudo) {
+		if (forma()==0) {
+			conteudo.add("10");
+		}else {
+			conteudo.add(0,"10");
+		}
+	}
+	
+	public void deletar(LinkedList<String> conteudo) {
+		Scanner fileScanner;
+		if (forma()==0) {
+			conteudo.remove();
+			fileScanner = new Scanner(path);
+			fileScanner.nextLine();
+		}else {
+			conteudo.remove(conteudo.getLast());
+			fileScanner = new Scanner(path);
+			fileScanner.nextLine();
+		}
+			atualizarArquivo(conteudo,fileScanner);
+	}
+	
+	public void atualizarArquivo(LinkedList<String> conteudo, Scanner fileScanner) {
+//		File originalFile = new File(path);
+//        BufferedReader br = new BufferedReader(new FileReader(originalFile));
+//
+//        // Construct the new file that will later be renamed to the original
+//        // filename.
+//        System.out.println(path+"../");
+//        File tempFile = new File("path"+"../"+"tempfile.txt");
+//        PrintWriter pw = new PrintWriter(new FileWriter(tempFile));
+//
+//        String line = null;
+//        // Read from the original file and write to the new
+//        // unless content matches data to be removed.
+//        while ((line = br.readLine()) != null) {
+//
+//            if (line.contains(conteudo)) {
+//                String strCurrentSalary = line.substring(line.lastIndexOf(" "), line.length());
+//                if (strCurrentSalary != null || !strCurrentSalary.trim().isEmpty()) {
+//                    int replenishedSalary = Integer.parseInt(strCurrentSalary.trim()) + replenish;
+//                    System.out.println("replenishedSalary : " + replenishedSalary);
+//                    line = line.substring(0,line.lastIndexOf(" ")) + replenishedSalary;
+//                }
+//
+//            }
+//            pw.println(line);
+//            pw.flush();
+//        }
+//        pw.close();
+//        br.close();
+//
+//        // Delete the original file
+//        if (!originalFile.delete()) {
+//            System.out.println("Could not delete file");
+//            return;
+//        }
+//
+//        // Rename the new file to the filename the original file had.
+//        if (!tempFile.renameTo(originalFile))
+//            System.out.println("Could not rename file");
+
+    }
 
 	public Queue<String> abrirArquivo() {
 		JFileChooser fileChooser = null;
@@ -92,7 +220,7 @@ public class ManipularArquivos extends JFrame {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		Queue<String> conteudo = new LinkedList<String>();
+		LinkedList<String> conteudo = new LinkedList<String>();
 
 		fileChooser.setDialogTitle("Buscar arquivo.");
 		fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
@@ -110,7 +238,8 @@ public class ManipularArquivos extends JFrame {
 					while (lerArq.ready()) {
 						conteudo.add(lerArq.readLine());
 					}
-					conteudo.forEach(item -> System.out.println(item));
+					conteudoArquivo(conteudo);
+//					conteudo.forEach(item -> System.out.println(item));
 					arq.close();
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
