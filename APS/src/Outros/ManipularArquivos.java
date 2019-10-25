@@ -2,7 +2,6 @@ package Outros;
 
 import java.awt.Component;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -150,54 +149,67 @@ public class ManipularArquivos extends JFrame {
 	}
 	
 	public void adicionar(LinkedList<String> conteudo) {
-		Scanner fileScanner;
 		if (forma()==0) {
 			conteudo.add("10");
-			fileScanner = new Scanner(path);
-			fileScanner.nextLine();
 		}else {
 			conteudo.add(0,"10");
-			fileScanner = new Scanner(path);
-			fileScanner.nextLine();
 		}
-		atualizarArquivo(conteudo);
 	}
 	
 	public void deletar(LinkedList<String> conteudo) {
 		Scanner fileScanner;
-		System.out.println(path);
 		if (forma()==0) {
 			conteudo.remove();
 			fileScanner = new Scanner(path);
 			fileScanner.nextLine();
 		}else {
-//			System.out.println(conteudo.getLast());
 			conteudo.remove(conteudo.getLast());
 			fileScanner = new Scanner(path);
 			fileScanner.nextLine();
 		}
-			atualizarArquivo(conteudo);
+			atualizarArquivo(conteudo,fileScanner);
 	}
 	
-	public void atualizarArquivo(LinkedList<String> conteudo) {
-		System.out.println(conteudo);
-		File fnew=new File(path);
-		FileWriter f2;
+	public void atualizarArquivo(LinkedList<String> conteudo, Scanner fileScanner) {
+//		File originalFile = new File(path);
+//        BufferedReader br = new BufferedReader(new FileReader(originalFile));
+//
+//        // Construct the new file that will later be renamed to the original
+//        // filename.
+//        System.out.println(path+"../");
+//        File tempFile = new File("path"+"../"+"tempfile.txt");
+//        PrintWriter pw = new PrintWriter(new FileWriter(tempFile));
+//
+//        String line = null;
+//        // Read from the original file and write to the new
+//        // unless content matches data to be removed.
+//        while ((line = br.readLine()) != null) {
+//
+//            if (line.contains(conteudo)) {
+//                String strCurrentSalary = line.substring(line.lastIndexOf(" "), line.length());
+//                if (strCurrentSalary != null || !strCurrentSalary.trim().isEmpty()) {
+//                    int replenishedSalary = Integer.parseInt(strCurrentSalary.trim()) + replenish;
+//                    System.out.println("replenishedSalary : " + replenishedSalary);
+//                    line = line.substring(0,line.lastIndexOf(" ")) + replenishedSalary;
+//                }
+//
+//            }
+//            pw.println(line);
+//            pw.flush();
+//        }
+//        pw.close();
+//        br.close();
+//
+//        // Delete the original file
+//        if (!originalFile.delete()) {
+//            System.out.println("Could not delete file");
+//            return;
+//        }
+//
+//        // Rename the new file to the filename the original file had.
+//        if (!tempFile.renameTo(originalFile))
+//            System.out.println("Could not rename file");
 
-		try {
-		    f2 = new FileWriter(fnew,false);
-		    for (String s : conteudo) {
-		    	if (s=="") {
-					
-				}else {
-		    	f2.write(s+"\n");
-				}
-			}
-		    f2.close();
-		} catch (IOException e) {
-		        // TODO Auto-generated catch block
-		        e.printStackTrace();
-		}  
     }
 
 	public Queue<String> abrirArquivo() {
@@ -220,7 +232,6 @@ public class ManipularArquivos extends JFrame {
 			File file = fileChooser.getSelectedFile();
 			try {
 				FileReader arq = new FileReader(file.getPath());
-				path  = file.getPath();
 				BufferedReader lerArq = new BufferedReader(arq);
 				try {
 					conteudo.add(lerArq.readLine());
