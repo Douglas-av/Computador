@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Scanner;
@@ -49,25 +50,25 @@ public class ManipularArquivos extends JFrame {
 		scrollPane = new JScrollPane();
 		scrollPane.setBounds(0, 0, 300, 200);
 	}
-	
+
 	public String selecionarDiretorio() {
 		File caminho = new File(""); 
-	    JFileChooser chooser = new JFileChooser(); 
-	    chooser.setCurrentDirectory(new java.io.File("."));
-	    chooser.setDialogTitle("Escolha onde quer salvar o arquivo");
-	    chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-	    //
-	    // disable the "All files" option.
-	    //
-	    chooser.setAcceptAllFileFilterUsed(false);
-	    //    
-	    if (chooser.showOpenDialog(chooser) == JFileChooser.APPROVE_OPTION) { 
-	      caminho = chooser.getSelectedFile();
-	      }
-	    else {
-	      System.out.println("Nada selecionado ");
-	      }
-	    return caminho.toString();
+		JFileChooser chooser = new JFileChooser(); 
+		chooser.setCurrentDirectory(new java.io.File("."));
+		chooser.setDialogTitle("Escolha onde quer salvar o arquivo");
+		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		//
+		// disable the "All files" option.
+		//
+		chooser.setAcceptAllFileFilterUsed(false);
+		//    
+		if (chooser.showOpenDialog(chooser) == JFileChooser.APPROVE_OPTION) { 
+			caminho = chooser.getSelectedFile();
+		}
+		else {
+			System.out.println("Nada selecionado ");
+		}
+		return caminho.toString();
 	}
 
 	public void novoArquivo() {
@@ -78,7 +79,7 @@ public class ManipularArquivos extends JFrame {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-//		String dir = pasta.getAbsolutePath();
+		//		String dir = pasta.getAbsolutePath();
 		String caminho = selecionarDiretorio();
 		try {
 			String nomeArq = JOptionPane.showInputDialog("Informe o nome do arquivo: ");
@@ -106,12 +107,15 @@ public class ManipularArquivos extends JFrame {
 			e1.printStackTrace();
 		}
 	}
-	
-	public void conteudoArquivo(LinkedList<String> conteudo) {
-		if (conteudo.getFirst()==null) {
+
+	public void conteudoArquivo(Queue<String> conteudo) {
+		if (conteudo.peek()==null) {
 			JOptionPane.showMessageDialog(null,"O arquivo selecionado esta vazio","Aviso",JOptionPane.INFORMATION_MESSAGE); 
 		}else {
-			conteudo.forEach(item -> System.out.println(item));
+			for (Iterator<String> i = conteudo.iterator(); i.hasNext();) {
+				String item = i.next();
+				System.out.println(item);
+			}
 			Object[] opcoes= { "Adicionar", "Deletar"};
 			int escolha = JOptionPane.showOptionDialog(null,
 					"O arquivo selecionado possui os seguintes valores:\n\r"+conteudo+"\n\rDeseja deletar ou adicionar algum valor?",
@@ -121,84 +125,56 @@ public class ManipularArquivos extends JFrame {
 					null,     //do not use a custom Icon
 					opcoes,  //the titles of buttons
 					opcoes[0]); //default button title
-//			System.out.println(escolha);
+			//			System.out.println(escolha);
 			if (escolha==JOptionPane.YES_OPTION) {
 				adicionar(conteudo);
-			}else {
+			}else if(escolha==JOptionPane.NO_OPTION){
 				deletar(conteudo);
+			}else{
+				dispose();
 			}
 		}
 	}
 	
-	public int forma() {
-		Object[] opcoes2 = { "Fila", "Pilha","Cancelar" };
-		int tipoEntrada = JOptionPane.showOptionDialog(null,
-				"Deseja inserir valores usando pila ou filha?",
-				"Método de entrada",
-				JOptionPane.YES_NO_OPTION,
-				JOptionPane.QUESTION_MESSAGE,
-				null,     //do not use a custom Icon
-				opcoes2,  //the titles of buttons
-				opcoes2[0]); //default button title
-		if (tipoEntrada==JOptionPane.YES_OPTION) {
-			return 0;
-//			conteudo.add("10");
-		}else {
-//			conteudo.add(0,"10");
-			return 	1;
-		}
-	}
-	
-	public void adicionar(LinkedList<String> conteudo) {
+
+	public void adicionar(Queue<String> conteudo) {
 		Scanner fileScanner;
-		if (forma()==0) {
 			conteudo.add("10");
 			fileScanner = new Scanner(path);
 			fileScanner.nextLine();
-		}else {
-			conteudo.add(0,"10");
-			fileScanner = new Scanner(path);
-			fileScanner.nextLine();
-		}
-		atualizarArquivo(conteudo);
+			atualizarArquivo(conteudo);		
 	}
-	
-	public void deletar(LinkedList<String> conteudo) {
+
+	public void deletar(Queue<String> conteudo) {
 		Scanner fileScanner;
 		System.out.println(path);
-		if (forma()==0) {
 			conteudo.remove();
 			fileScanner = new Scanner(path);
 			fileScanner.nextLine();
-		}else {
-//			System.out.println(conteudo.getLast());
-			conteudo.remove(conteudo.getLast());
-			fileScanner = new Scanner(path);
-			fileScanner.nextLine();
-		}
 			atualizarArquivo(conteudo);
-	}
 	
-	public void atualizarArquivo(LinkedList<String> conteudo) {
+	}
+
+	public void atualizarArquivo(Queue<String> conteudo) {
 		System.out.println(conteudo);
 		File fnew=new File(path);
 		FileWriter f2;
 
 		try {
-		    f2 = new FileWriter(fnew,false);
-		    for (String s : conteudo) {
-		    	if (s=="") {
-					
+			f2 = new FileWriter(fnew,false);
+			for (String s : conteudo) {
+				if (s=="") {
+
 				}else {
-		    	f2.write(s+"\n");
+					f2.write(s+"\n");
 				}
 			}
-		    f2.close();
+			f2.close();
 		} catch (IOException e) {
-		        // TODO Auto-generated catch block
-		        e.printStackTrace();
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}  
-    }
+	}
 
 	public Queue<String> abrirArquivo() {
 		JFileChooser fileChooser = null;
@@ -208,7 +184,7 @@ public class ManipularArquivos extends JFrame {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		LinkedList<String> conteudo = new LinkedList<String>();
+		Queue<String> conteudo = new LinkedList<String>();
 
 		fileChooser.setDialogTitle("Buscar arquivo.");
 		fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
@@ -216,83 +192,82 @@ public class ManipularArquivos extends JFrame {
 		FileNameExtensionFilter filter = new FileNameExtensionFilter("Arquivo", "txt", "csv", "xml");
 		fileChooser.setFileFilter(filter);
 		int retorno = fileChooser.showOpenDialog(null);
-		if (retorno == JFileChooser.APPROVE_OPTION) {
-			File file = fileChooser.getSelectedFile();
+		File file = fileChooser.getSelectedFile();
+		try {
+			FileReader arq = new FileReader(file.getPath());
+			path  = file.getPath();
+			BufferedReader lerArq = new BufferedReader(arq);
 			try {
-				FileReader arq = new FileReader(file.getPath());
-				path  = file.getPath();
-				BufferedReader lerArq = new BufferedReader(arq);
-				try {
+				conteudo.add(lerArq.readLine());
+				while (lerArq.ready()) {
 					conteudo.add(lerArq.readLine());
-					while (lerArq.ready()) {
-						conteudo.add(lerArq.readLine());
-					}
-					conteudoArquivo(conteudo);
-//					conteudo.forEach(item -> System.out.println(item));
-					arq.close();
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
 				}
-
-			} catch (FileNotFoundException e1) {
+				conteudoArquivo(conteudo);
+				//					conteudo.forEach(item -> System.out.println(item));
+				arq.close();
+			} catch (IOException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
 
-		return conteudo;
+	
+
+	return conteudo;
+}
+
+public Component criarGrafico(int quantidade, Queue<Integer> valores, Queue<String> nomes, Queue<String> nuzei) {
+	DefaultCategoryDataset barra = new DefaultCategoryDataset();
+
+	for (int i = 0; i < quantidade; i++) {
+		barra.addValue(valores.remove(), nomes.remove(), nuzei.remove());
 	}
 
-	public Component criarGrafico(int quantidade, Queue<Integer> valores, Queue<String> nomes, Queue<String> nuzei) {
-		DefaultCategoryDataset barra = new DefaultCategoryDataset();
+	JFreeChart grafico = ChartFactory.createBarChart3D("Grafico de idades por sexo", "Nomes", "Idade", barra,
+			PlotOrientation.VERTICAL, true, true, false);
 
-		for (int i = 0; i < quantidade; i++) {
-			barra.addValue(valores.remove(), nomes.remove(), nuzei.remove());
-		}
+	ChartPanel painel = new ChartPanel(grafico);
+	painel.setLocation(38, 69);
+	painel.setBounds(0, 0, 200, 200);
+	getContentPane().add(painel);
+	painel.setLayout(null);
+	painel.setVisible(true);
+	return painel;
+}
 
-		JFreeChart grafico = ChartFactory.createBarChart3D("Grafico de idades por sexo", "Nomes", "Idade", barra,
-				PlotOrientation.VERTICAL, true, true, false);
+public Component atualizaTabela(Queue<String> conteudo) {
+	this.setVisible(true);
+	String[] separadas;
+	String[] cabecalho;
+	cabecalho = conteudo.remove().split(";");
+	ArrayList<String> lista = new ArrayList<String>();
+	lista.addAll(conteudo);
+	separadas = lista.toString().split(",");
+	tabela = new JTable();
+	// Definir o cabeçalho da tabela.
+	DefaultTableModel modelo = (DefaultTableModel) tabela.getModel();
+	modelo.setColumnIdentifiers(cabecalho);
 
-		ChartPanel painel = new ChartPanel(grafico);
-		painel.setLocation(38, 69);
-		painel.setBounds(0, 0, 200, 200);
-		getContentPane().add(painel);
-		painel.setLayout(null);
-		painel.setVisible(true);
-		return painel;
+	for (int i = 0; i < separadas.length; i++) {
+		String[] valor = separadas[i].toString().split(";");
+		modelo.addRow(valor);
 	}
 
-	public Component atualizaTabela(Queue<String> conteudo) {
-		this.setVisible(true);
-		String[] separadas;
-		String[] cabecalho;
-		cabecalho = conteudo.remove().split(";");
-		ArrayList<String> lista = new ArrayList<String>();
-		lista.addAll(conteudo);
-		separadas = lista.toString().split(",");
-		tabela = new JTable();
-		// Definir o cabeçalho da tabela.
-		DefaultTableModel modelo = (DefaultTableModel) tabela.getModel();
-		modelo.setColumnIdentifiers(cabecalho);
+	scrollPane.setViewportView(tabela);
+	return scrollPane;
+}
 
-		for (int i = 0; i < separadas.length; i++) {
-			String[] valor = separadas[i].toString().split(";");
-			modelo.addRow(valor);
-		}
+public static void main(String[] args) {
+	ManipularArquivos mnaq = new ManipularArquivos();
+	//		Queue<String> s = mnaq.abrirArquivo();
+	//
+	//		mnaq.atualizaTabela(s);
 
-		scrollPane.setViewportView(tabela);
-		return scrollPane;
-	}
-
-	public static void main(String[] args) {
-		ManipularArquivos mnaq = new ManipularArquivos();
-//		Queue<String> s = mnaq.abrirArquivo();
-//
-//		mnaq.atualizaTabela(s);
-
-		mnaq.abrirArquivo();
-	}
+	mnaq.abrirArquivo();
+}
 
 }
