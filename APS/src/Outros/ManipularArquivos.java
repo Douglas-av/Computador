@@ -107,14 +107,15 @@ public class ManipularArquivos extends JFrame {
 		}
 	}
 	
-	public void conteudoArquivo(LinkedList<String> conteudo) {
-		if (conteudo.getFirst()==null) {
+	public void conteudoArquivo(Queue<String> conteudo) {
+		if (conteudo.peek()==null) {
 			JOptionPane.showMessageDialog(null,"O arquivo selecionado esta vazio","Aviso",JOptionPane.INFORMATION_MESSAGE); 
-		}else {
+		}
+		else {
 			conteudo.forEach(item -> System.out.println(item));
-			Object[] opcoes= { "Adicionar", "Deletar"};
+			Object[] opcoes= { "Fila", "Pilha"};
 			int escolha = JOptionPane.showOptionDialog(null,
-					"O arquivo selecionado possui os seguintes valores:\n\r"+conteudo+"\n\rDeseja deletar ou adicionar algum valor?",
+					"O arquivo selecionado possui os seguintes valores:\n\r"+conteudo+"\n\rDeseja mexer nessa lista como fila ou pilhha?",
 					"Leitura",
 					JOptionPane.YES_NO_OPTION,
 					JOptionPane.QUESTION_MESSAGE,
@@ -124,62 +125,31 @@ public class ManipularArquivos extends JFrame {
 //			System.out.println(escolha);
 			if (escolha==JOptionPane.YES_OPTION) {
 				adicionar(conteudo);
-			}else {
+			}else if(escolha==JOptionPane.NO_OPTION){
 				deletar(conteudo);
+			}else {
+				dispose();
 			}
 		}
 	}
 	
-	public int forma() {
-		Object[] opcoes2 = { "Fila", "Pilha","Cancelar" };
-		int tipoEntrada = JOptionPane.showOptionDialog(null,
-				"Deseja inserir valores usando pila ou filha?",
-				"Método de entrada",
-				JOptionPane.YES_NO_OPTION,
-				JOptionPane.QUESTION_MESSAGE,
-				null,     //do not use a custom Icon
-				opcoes2,  //the titles of buttons
-				opcoes2[0]); //default button title
-		if (tipoEntrada==JOptionPane.YES_OPTION) {
-			return 0;
-//			conteudo.add("10");
-		}else {
-//			conteudo.add(0,"10");
-			return 	1;
-		}
-	}
-	
-	public void adicionar(LinkedList<String> conteudo) {
+	public void adicionar(Queue<String> conteudo) {
 		Scanner fileScanner;
-		if (forma()==0) {
-			conteudo.add("10");
-			fileScanner = new Scanner(path);
-			fileScanner.nextLine();
-		}else {
-			conteudo.add(0,"10");
-			fileScanner = new Scanner(path);
-			fileScanner.nextLine();
-		}
+		conteudo.add("10");
+		fileScanner = new Scanner(path);
+		fileScanner.nextLine();
 		atualizarArquivo(conteudo);
 	}
 	
-	public void deletar(LinkedList<String> conteudo) {
+	public void deletar(Queue<String> conteudo) {
 		Scanner fileScanner;
-		System.out.println(path);
-		if (forma()==0) {
-			conteudo.remove();
-			fileScanner = new Scanner(path);
-			fileScanner.nextLine();
-		}else {
-//			System.out.println(conteudo.getLast());
-			conteudo.remove(conteudo.getLast());
-			fileScanner = new Scanner(path);
-			fileScanner.nextLine();
-		}
-			atualizarArquivo(conteudo);
+		conteudo.remove();
+		fileScanner = new Scanner(path);
+		fileScanner.nextLine();
+		atualizarArquivo(conteudo);
 	}
 	
-	public void atualizarArquivo(LinkedList<String> conteudo) {
+	public void atualizarArquivo(Queue<String> conteudo) {
 		System.out.println(conteudo);
 		File fnew=new File(path);
 		FileWriter f2;
@@ -208,7 +178,7 @@ public class ManipularArquivos extends JFrame {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		LinkedList<String> conteudo = new LinkedList<String>();
+		Queue<String> conteudo = new LinkedList<String>();
 
 		fileChooser.setDialogTitle("Buscar arquivo.");
 		fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
@@ -276,7 +246,6 @@ public class ManipularArquivos extends JFrame {
 		// Definir o cabeçalho da tabela.
 		DefaultTableModel modelo = (DefaultTableModel) tabela.getModel();
 		modelo.setColumnIdentifiers(cabecalho);
-
 		for (int i = 0; i < separadas.length; i++) {
 			String[] valor = separadas[i].toString().split(";");
 			modelo.addRow(valor);
